@@ -556,7 +556,7 @@ public class TypeCheckerVisitor : IVisitor<...> {
 * ¿Cuántos errores más causaremos en la subida por el AST?
 
 ```cs
-int x = 4 + int.Parse(Console.ReadLine);
+int x = 4 + int.Parse(Console.WriteLine() + 9);
 ```
 
 . . .

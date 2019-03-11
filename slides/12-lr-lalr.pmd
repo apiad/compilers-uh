@@ -1,0 +1,366 @@
+% Parsing LR(1) y LALR(1)
+% Lic. Juan Pablo Consuegra Ayala
+% MatCom, UH
+
+# Recordando...
+
+\newcommand{\ep}{\ensuremath{\epsilon}}
+
+- Sea $I_i$ un elemento de la Colección Canónica de Items LR(0).
+
+- Sea $S' \to S.$ un item válido.
+
+> **Entonces** $ACTION[I_i,\$] = OK$.
+
+  **Estado**   \+   \*   (   )   int   $   **E** **T** **F**
+ ------------ ---- ---- --- --- ----- ---- ----- ----- -----
+    $I_i$                              OK
+ ------------ ---- ---- --- --- ----- ---- ----- ----- -----
+
+# Recordando...
+
+- Sea $I_i$ un elemento de la Colección Canónica de Items LR(0).
+
+- Sea $X \to \alpha .$ un item válido.
+
+- Para toda $c \in FOLLOW(X)$.
+
+> **Entonces** $ACTION[I_i,c] = R_k$ (producción `k` es $X \to \alpha$).
+
+## Ejemplo
+
+- $E \to E + T.$
+
+- $FOLLOW(X) = \{ \$, +, ) \}$
+
+  **Estado**   \+    \*   (    )    int    $   **E** **T** **F**
+ ------------ ----- ---- --- ----- ----- ----- ----- ----- -----
+    $I_i$     $R_1$          $R_1$       $R_1$
+ ------------ ----- ---- --- ----- ----- ----- ----- ----- -----
+
+# Recordando...
+
+- Sea $I_i$ un elemento de la Colección Canónica de Items LR(0).
+
+- Sea $X \to \alpha .c \omega$ un item válido.
+
+- Sea $Goto(I_i,c) = I_j$.
+
+> **Entonces** $ACTION[I_i,c] = S_j$.
+
+## Ejemplo
+
+- $T \to T .* F$
+
+- $Goto(I_i,*) = I_j$
+
+  **Estado**   \+   \*    (   )   int   $  **E** **T** **F**
+ ------------ ---- ----- --- --- ----- --- ----- ----- -----
+    $I_i$          $S_j$
+ ------------ ---- ----- --- --- ----- --- ----- ----- -----
+
+# Recordando...
+
+- Sea $I_i$ un elemento de la Colección Canónica de Items LR(0).
+
+- Sea $X \to \alpha .Y \omega$ un item válido.
+
+- Sea $Goto(I_i,Y) = I_j$.
+
+> **Entonces** $GOTO[I_i,Y] = j$.
+
+## Ejemplo
+
+- $E \to ( .E )$
+
+- $Goto(I_i,E) = I_j$.
+
+  **Estado**   \+   \*   (   )   int   $  **E** **T** **F**
+ ------------ ---- ---- --- --- ----- --- ----- ----- -----
+    $I_i$                                  $j$
+ ------------ ---- ---- --- --- ----- --- ----- ----- -----
+
+# Límite del parser SLR(1)
+
+- Muchas gramáticas medianamente complicadas no son SLR(1).
+
+- Los parsers SLR(1) son considerablemente más expresivos que los parser LR(0).
+
+## Cómo llegamos de LR(0) a SLR(1)?
+
+. . .
+
+- Refinamos el criterio de reducción de las producciones.
+
+## Podemos encontrar un criterio más fuerte?
+
+. . .
+
+- Sí, justamente ese criterio es el usado por el parser más expresivo que estudiaremos: **parser LR(1) canónico**.
+
+# Conflicto en SLR(1): Ejemplo
+
+         S -> E
+         E -> A = A | i
+         A -> i + A | i
+
+## Cómo queda el autómata LR(0)?
+
+. . .
+
+         I0: S -> .E            Goto(I0, i) = {
+             E -> .A = A             E -> i.
+             E -> .i                 A -> i.+ A
+             A -> .i + A             A -> i.
+             A -> .i            }
+
+> Tenemos un conflicto **Reduce-Reduce**!!!
+
+# Conflicto en SLR(1): Estudiando el lenguaje
+
+Cuál es la cadena más corta perteneciente al lenguaje tal que el parser SLR(1) no puede desambiguar el camino?
+
+. . .
+
+- `i$`
+
+> Es realmente ambigua la derivación?  
+> Puede un ser humano decidir cuál es la reducción correcta?
+
+. . .
+
+- `S => E => i` es la única derivación posible de la cadena.
+
+# Conflicto en SLR(1): Estudiando el parser
+
+- Dónde falla entonces el parser SLR(1)?
+
+- Por qué no puede diferenciar entre las reducciones `E -> i` y `A -> i`?
+
+. . .
+
+> El símbolo `$` pertenece tanto a `Follow(E)` y como a `Follow(A)`.
+
+El conjunto `Follow(X)` contiene **todo** símbolo que pueda seguir al no-terminal `X` en **alguna** forma oracional.
+
+Contiene información **global** de todas las producciones.
+
+- Cómo podríamos entonces diferenciarlas?
+
+# Conflicto en SLR(1): Estudiando el autómata
+
+El estado $I_0$ se construye a partir del item kernel **`S -> .E`**.
+
+> Intuitivamente, se espera **reducir** una expresión para reducir al distinguido y finalizar.
+
+. . .
+
+Este añade los items **`E -> .A = A`** y **`E -> .i`**.
+
+> Intuitivamente, la expresión puede obtenerse directamente de reducir un entero **`i`**, o de reducir una expresión de igualdad **`A = A`**.
+
+. . .
+
+Este último añade los items **`A -> .i + A`** y **`A -> .i`**.
+
+> Pero, tiene sentido hacer **reduce** a **`A -> i`** si lo que viene es un `$`?
+
+. . .
+
+> **NO!!! Esta será justamente la clave usaremos para desambiguar.**
+
+# Item LR(1)
+
+Llamaremos **item LR(1)** a una cadena de la forma $X \rightarrow \alpha . \beta, c$ donde $\alpha, beta \in (V_n \cup V_t)^*$ y $c \in V_t$.
+
+- $\alpha$ lo que "hemos visto".
+- $\beta$ lo que "nos falta por leer".
+- $c$ lo que "esperamos leer".
+
+> Es una extensión de **item LR(0)** que adiciona un concepto de lo que se espera leer.
+
+- A la sección $X \rightarrow \alpha . \beta$ le llamaremos **centro**.
+- A la sección $c$ le llamaremos **lookahead**.
+
+# Clausura y Goto
+
+Sea $I$ un conjunto de **items LR(1)** (kernel o no).
+
+## Clausura de un conjunto de items LR(1)
+
+- $CL(I) = I \cup \{ X \rightarrow .\beta, b\}$ tales que:
+    - $Y \rightarrow \alpha .X \delta, c \in CL(I)$
+    - $b \in First(\delta c)$.
+
+## Goto
+
+- $Goto(I,X) = CL(\{ Y \rightarrow \alpha X. \beta, c | Y \rightarrow \alpha .X \beta, c \in I \})$
+
+# Autómata LR(1)
+
+Se construye a partir del item **`S' -> .S, $`**.
+
+- El estado inicial es la clausura del item **`S' -> .S, $`**.
+- Todos los estados son finales.
+- Las transiciones ocurren con terminales y no terminales.
+- La función de transición está dada por función **goto**.
+    - `f(Ii, c) = Goto(Ii, c)`
+
+> El lenguaje de este autómata continua siendo el mismo que el anterior: lenguaje de los prefijos viables.
+
+# Ejemplo: Autómata LR(1)
+
+      S -> E
+      E -> A = A | i
+      A -> i + A | i
+
+## Estado inicial
+
+      I0: S -> .E, $
+          ...
+
+. . .
+
+          E -> .A = A, $
+          E -> .i, $
+          ...
+
+. . .
+
+          A -> .i + A, =
+          A -> .i, =
+
+# Ejemplo: Autómata LR(1)
+
+      S -> E
+      E -> A = A | i
+      A -> i + A | i
+
+## Estado inicial
+
+      I0: S -> .E, $            Goto(I0, i) = {
+          E -> .A = A, $             E -> i., $
+          E -> .i, $                 A -> i.+ A, =
+          A -> .i + A, =             A -> i., =
+          A -> .i, =            }
+
+# Parser LR(1) canónico
+
+Cómo concretar el algoritmo de parsing LR(1)?
+
+- Verificar si el estado de la pila es un prefijo viable.
+- En tal caso, hacer _shift_ o _reduce_ en función de los **items válidos**.
+    - Un item de la forma "$X \to \alpha.c\beta, s$" sugiere _shift_ si el parser se encuentra en un estado $\delta|c\omega$.
+    - Un item de la forma "$X \to \alpha., s$" sugiere _reduce_ si el parser se encuentra en un estado $\delta|s\omega$.
+
+Una gramática $G$ se dice LR(1) canónico si y solo si el autómata LR(1) asociado no presenta conflictos shift-reduce ni reduce-reduce bajo el criterio descrito arriba.
+
+# Cómo llena la tabla un parser LR(1)?
+
+- **Sea** "$X \to \alpha .c \omega, s$" un item del estado $I_i$ y $Goto(I_i,c) = I_j$. **Entonces** $ACTION[I_i,c] = `S_j`$.
+
+- **Sea** "$X \to \alpha ., s$" un item del estado $I_i$.  
+**Entonces** $ACTION[I_i,s] = `R_k`$ (producción `k` es $X \to \alpha$).
+
+- **Sea** $I_i$ el estado que contiene el item "$S' \to S., \$$" ($S'$ distinguido).  
+**Entonces** $ACTION[I_i,\$] = `OK`$.
+
+- **Sea** "$X \to \alpha .Y \omega, s$" item del estado $I_i$ y $Goto(I_i,Y) = I_j$. **Entonces** $GOTO[I_i,Y] = j$.
+
+# Ejemplo
+
+> En pizarra...
+
+. . .
+
+\ ![](../graphics/lr1.svg){ width=100% }
+
+
+# Cuál fue el precio pagado por ganar en expresividad?
+
+- Es necesario separar en múltiples estados lo que antes era un solo estado, para poder discriminar con exactitud qué tokens activan una reducción.
+
+- El número de estados aumenta considerablemente respecto a SLR(1).
+
+## Será posible reducir el número de estados?
+
+. . .
+
+> Resulta que sí!!! Analicemos uno de estos casos.
+
+# Ejemplo: Mezcla de estados del autómata LALR(1)
+
+      I7 = Goto(I4, i) = {
+          A -> i.+ A, $
+          A -> i.,    $
+      }
+
+      I9 = Goto(I5, i) = {
+          A -> i.+ A, =
+          A -> i.,    =
+      }
+
+## Pueden mezclase?
+
+      I7-9 = {
+          A -> i.+ A, =$
+          A -> i.,    =$
+      }
+
+---
+
+    I5 = Goto(I3, +) = {
+        A ->  i +.A, =
+        A -> .i + A, =          I5-10 = {
+        A -> .i,     =              A ->  i +.A, =$
+    }                               A -> .i + A, =$
+                                    A -> .i,     =$
+    I10 = Goto(I7, +) = {       }
+        A ->  i +.A, $
+        A -> .i + A, $
+        A -> .i,     $
+    }
+
+---
+
+    I8 = Goto(I5, A) = {
+        A -> i + A., =          I8-11 = {
+    }                               A -> i + A., =$
+                                }
+    I11 = Goto(I10, A) = {
+        A -> i + A., $
+    }
+
+# Parser LALR(1)
+
+- Si al compactar **todos** los estados con la estrategia anterior no aparecen conflictos **Reduce-Reduce** en el autómata **entonces** la gramática se dice **LALR(1)**.
+
+> OJO: Al mezclar nunca aparecen conflictos **Shift-Reduce**.
+
+- La cantidad de estados coincide con la de los parsers SLR(1).
+
+# Comparación entre algoritmos de parsing
+
+- El parser LL es el más sencillo de implementar.
+    - En ocasiones no hay ni que recurrir a un generador de parser.
+
+- El parser SLR tiene una cantidad de estados considerablemente menor que LR.
+
+- Las gramáticas LR son un conjunto estrictamente superior a las gramáticas LL, SLR y LALR.
+
+> Si un lenguaje puede ser parseado en tiempo lineal, entonces puede ser parseado con un parser LR(1).
+
+# Jerarquía de gramáticas
+
+                    +------------------+
+                    |        LR        |
+                    |     +------+     |
+                    |     |  LL  |     |
+                    | +---|------|---+ |
+                    | |   | LALR |   | |
+                    | | +-|------|-+ | |
+                    | | | | SLR  | | | |
+                    | | +-|------|-+ | |
+                    | +---|------|---+ |
+                    |     +------+     |
+                    +------------------+

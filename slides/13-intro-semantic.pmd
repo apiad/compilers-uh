@@ -1,0 +1,199 @@
+% Análisis Semántico : Introducción
+% Lic. Juan Pablo Consuegra Ayala
+% MatCom, UH
+
+# Qué hemos estudiado?
+
+. . .
+
+- Análisis lexicográfico
+
+         string text -> [LEXER] -> Token[] tokens
+
+    > Expresiones regulares
+
+. . .
+
+- Análisis sintáctico
+
+         Token[] tokens -> [PARSER] -> Árbol de derivación
+
+    > Parser LR(1)
+
+> Pero en qué se traduce esto?
+
+# Problemas al compilar un programa
+
+## Resueltos
+
+. . .
+
+- `...`
+- Nombre de variables correctos.
+    - **ej:** no comienzan con dígito, no contienen puntos.
+
+- Instrucciones terminadas en `;`.
+
+- Paréntesis y llaves balanceadas.
+- `...`
+
+# Problemas al compilar un programa
+
+## Sin resolver
+
+. . .
+
+- Declarar variables antes de poder usarlas.
+- Determinar qué operaciones son válidas para un tipo determinado.
+    - Impedir suma entre int y bool.
+    - Consistencia de la invocación a.F() (la herencia lo complica).
+        + Existe una función `F` definida para el tipo de `a` (o algún tipo padre).
+        + Cantidad de parámetros.
+        + Tipos de los parámetros (compatibles, no necesariamente iguales dado el principio de sustitución).
+
+. . .
+
+> No pueden ser resueltos en una gramática libre del contexto.
+
+# Más allá de la sintaxis
+
+Cuál fue el mecanismo que diseñamos para evaluar "reglas" sobre la gramática?
+
+. . .
+
+> **Gramáticas atributadas**
+
+> La gramática impone _reglas sintácticas_ y con los atributos se resuelven _reglas semánticas_.
+
+Las usamos para:
+
+1. Restringir el lenguaje reconocido por la gramática.
+    - **ej:** $a^n b^n c^n$ (que sabemos que no es un LLC).
+2. Evaluar expresiones.
+
+# Gramáticas atributadas **evaluables**
+
+Las reglas para evaluar los atributos de las gramática atributadas tienen ciertas restricciones para garantizar que fueran evaluables.
+
+- L-Atributadas
+
+    - Podían evaluarse durante el parsing LL(1)).
+
+- S-Atributadas
+
+    - Pueden evaluarse durante el parsing LR(1)
+    - También durante parsing LL(1) (toda gramática S-Atributada es también L-Atributada).
+
+`=>` Llevar la semántica a una estructura apartada de la gramática.
+
+# Árbol de Sintaxis Abstracta (AST)
+
+- Árbol de derivación depende la la gramática.
+    - **Ejemplo LL(1)**
+    - **Ejemplo LR(1)**
+
+  > Atrapa la sintaxis `=>` Tiene una estructura fácil de parsear.
+
+- Pero a ambos se le asocia el mismo AST
+
+ > Atrapa la semántica `=>` Fácil de evaluar.
+
+# Lenguaje de ejemplo: Reglas sintácticas
+
+El lenguaje tiene tres tipos de instrucciones: `let`, `def` y `print`:
+
+- `let <var> = <expr>` define una variable denominada `<var>` y le asigna el valor de `<expr>`.
+- `def <func>(<arg1>, <arg2>, ...) -> <expr>` define una nueva función `<func>` con los argumentos `<arg*>`.
+- `print <expr>` imprime el valor de una expresión.
+
+Las expresiones pueden ser de varios tipos:
+
+- Expresiones aritméticas.
+- Invocación de funciones predefinidas (`sin`, `cos`, `pow`, ...).
+- Invocación de funciones definidas en el programa.
+
+# Gramática
+
+       <program> := <stat-list>
+     <stat-list> := <stat> ";"
+                  | <stat> ";" <stat-list>
+          <stat> := <let-var>
+                  | <def-func>
+                  | <print-stat>
+       <let-var> := "let" ID "=" <expr>
+      <def-func> := "def" ID "(" <arg-list> ")" "->" <expr>
+    <print-stat> := "print" <expr>
+      <arg-list> := ID
+                  | ID "," <arg-list>
+
+---
+
+         <expr> := <expr> + <term>
+                 | <expr> - <term>
+                 | <term>
+         <term> := <term> * <factor>
+                 | <term> / <factor>
+                 | <factor>
+       <factor> := <atom>
+                 | "(" <expr> ")"
+         <atom> := NUMBER
+                 | ID
+                 | <func-call>
+    <func-call> := ID "(" <expr-list> ")"
+    <expr-list> := <expr>
+                 | <expr> "," <expr-list>
+
+# Lenguaje de ejemplo: Reglas semánticas
+
+- Una variable solo puede ser definida una vez en todo el programa.
+- Los nombres de variables y funciones no comparten el mismo ámbito.
+- No se pueden redefinir las funciones predefinidas.
+- Una función puede tener distintas definiciones siempre que tengan distinta cantidad de argumentos.
+
+---
+
+- Toda variable y función tiene que haber sido definida antes de ser usada en una expresión (salvo las funciones pre-definidas).
+- Todos los argumentos definidos en una misma función tienen que ser diferentes entre sí, aunque pueden ser iguales a variables definidas globalmente o argumentos definidos en otras funciones.
+- En el cuerpo de una función, los nombres de los argumentos ocultan los nombres de variables iguales.
+
+# Diseñar jerarquía del AST
+
+> En pizarra ...
+
+# Contexto
+
+- Conocer qué variables y funciones han sido definidas.
+- Manejar el ocultamiento de las variables (ej: parámetros).
+
+```cs
+public interface IContext {
+    bool IsDefined(string variable);
+    bool IsDefined(string function, int args);
+    bool Define(string variable);
+    bool Define(string function, string[] args);
+
+    IContext CreateChildContext();
+}
+```
+
+# Cheque semántico
+
+## Método en la jerarquía
+
+```python
+class Node:
+    def check_semantics(self):
+        # ...
+        pass
+```
+
+. . .
+
+## Patrón visitor
+
+```python
+class SemanticChecker:
+    def visit(self, node):
+        # ...
+        pass
+```

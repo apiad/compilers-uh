@@ -1,0 +1,402 @@
+% Parsing SLR(1)
+% Lic. Juan Pablo Consuegra Ayala
+% MatCom, UH
+
+# Recordando...
+
+- Parsing Ascendente (Bottom-Up).
+- Parsers Shift-Reduce.
+- Handle de una forma oracional.
+- Prefijos viables: lenguaje regular.
+
+\vspace{0.5cm}
+
+\ ![](../graphics/slr1-nfa.svg){ width=100% }
+
+# Recordando: Autómata LR(O) {.t}
+
+Sabemos que los NFA y DFA son equivalentes.
+
+$\implies$ Transformar el NFA a DFA.
+
+## Construir el DFA directamente:
+
+- Un **item kernel** es aquel de la forma $S' \rightarrow .S$ ($S'$ nuevo símbolo inicial), o cualquier item de la forma $X \rightarrow \alpha . \beta$ con $|\alpha|>1$.
+
+- Un **item no kernel** es aquel de la forma $X \rightarrow .\beta$ excepto el **item** $S' \rightarrow .S$.
+
+- Sea $I$ un conjunto de **items** (kernel o no), el conjunto clausura de $I$ se define como $CL(I) = I \cup \{ X \rightarrow .\beta \}$ tales que $Y \rightarrow \alpha .X \delta \in CL(I)$.
+
+- $Goto(I,X) = CL(\{ Y \rightarrow \alpha X. \beta | Y \rightarrow \alpha .X \beta \in I \})$
+
+# Recordando: Autómata LR(O) {.t}
+
+\vspace{0.8cm}
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{0.2cm}
+
+> Al conjunto de estados del DFA se le llama **Colección Canónica de Items LR(0)**.
+
+# Parsing LR(0)
+
+Cómo concretar un algoritmo de parsing bottom-up?
+
+. . .
+
+- Verificar si el estado de la pila es un prefijo viable.
+- En tal caso, hacer _shift_ o _reduce_ en función de los items en el estado final.
+    - Se les llama **Items válidos**.
+    - Un item de la forma $X \to \alpha.c\beta$ sugiere _shift_ si el parser se encuentra en un estado $\delta|c\omega$.
+    - Un item de la forma $X \to \alpha.$ sugiere _reduce_ siempre.
+
+Una gramática $G$ se dice LR(0) si y solo si el autómata LR(0) asociado no presenta conflictos shift-reduce ni reduce-reduce bajo el criterio descrito arriba.
+
+# Parsing SLR(1)
+
+Qué limitación se hace evidente del parser LR(0)?
+
+. . .
+
+> Basta con que en un estado hayan más de dos items y uno sugiera _reduce_ para que haya conflicto shift-reduce o reduce-reduce.
+
+Cómo podríamos mejorarlo?
+
+. . .
+
+> Al considerar un item válido $X \to \alpha.$ sugerir _reduce_ solo si el parser se encuentra en un estado $\delta|c\omega$, donde $c \in Follow(X)$.
+
+Una gramática $G$ se dice SLR(1) si y solo si el autómata LR(0) asociado no presenta conflictos shift-reduce ni reduce-reduce bajo el criterio descrito arriba.
+
+# Ejemplo
+
+     S  -> E
+     E  -> E + T | T
+     T  -> T * F | F
+     F  -> ( E ) | int
+
+## Follows?
+
+. . .
+
+     Follow(S) = { $ }
+     Follow(E) = { $, +, ) }
+     Follow(T) = { $, +, ), * }
+     Follow(F) = { $, +, ), * }
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     | int + int * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **SHIFT**
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     int | + int * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($F \to int$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     F | + int * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($T \to F$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     T | + int * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($E \to T$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E | + int * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **SHIFT**
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + | int * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **SHIFT**
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + int | * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($F \to int$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + F | * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($T \to F$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + T | * int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **SHIFT**
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + T * | int $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **SHIFT**
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + T * int | $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($F \to int$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + T * F | $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($T \to T * F$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E + T | $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **REDUCE** ($E \to E + T$)
+
+# Ejemplo
+
+     Follow(S) = { $ }        Follow(T) = { $, +, ), * }
+     Follow(E) = { $, +, ) }  Follow(F) = { $, +, ), * }
+
+\ ![](../graphics/slr1-dfa.svg){ width=100% }
+
+\vspace{-0.5cm}
+
+     E | $
+
+. . .
+
+\vspace{-0.5cm}
+$\implies$ **ACCEPT**
+
+# Optimizando
+
+A cada paso que da el parser, tiene que volver a comprobar si lo que queda en la pila es un prefijo viable, para así obtener el conjunto de items válidos.
+
+> Existe alguna mejor forma de moverse por el autómata LR(0)?
+
+- En qué estado terminaremos tras hacer una operación **shift**?
+
+- Y tras hacer un **reduce**?
+
+<!-- . . .
+
+- Si bajo la configuración $\alpha | c \omega$, $c \in V_t$, el autómata termina en el estado $I_i$. Entonces tras una operación **shift** se pasa a la configuración $\alpha c | \omega$ y el autómata termina en el estado $I_j$, con $Goto(I_i,c) = I_j$.
+
+- Sea $I_i$ el estado en que termina el autómata cuando $\alpha$ el contenido de la pila. Sea $\alpha \beta | \omega$ la configuración del parser. Entonces tras una operación **reduce $X \to \beta$** se pasa a la configuración $\alpha X | \omega$ y el autómata termina en el estado $I_j$, con $Goto(I_i,X) = I_j$. -->
+
+# Autómata LR(0): Shift
+
+- Sea $\alpha | c \omega$, $c \in V_t$, la configuración del parser. Sea $I_i$ el estado en que termina el autómata cuando $\alpha$ el contenido de la pila.
+
+> Entonces, tras una operación **shift**
+
+- Se pasa a la configuración $\alpha c | \omega$, y el autómata termina en el estado $I_j$, con $Goto(I_i,c) = I_j$.
+
+# Autómata LR(0): Reduce
+
+- Sea $\alpha \beta | \omega$ la configuración del parser. Sea $I_i$ el estado en que termina el autómata cuando $\alpha$ el contenido de la pila.
+
+> Entonces, tras una operación **reduce $X \to \beta$**
+
+- Se pasa a la configuración $\alpha X | \omega$, y el autómata termina en el estado $I_j$, con $Goto(I_i,X) = I_j$.
+
+# Implementación
+
+Alternar en la pila símbolos y estados.
+
+- Al hacer **shift** guardar el token y luego el estado $I_j = Goto(I_i,c)$.
+
+    ```plain
+      [ <a1,I1> ... <ai,Ii> ]
+      => SHIFT =>
+      [ <a1,I1>... <ai,Ii> <c,Ij> ]
+    ```
+
+- Al hacer **reduce** a $X \to \beta$, extraer $2 \cdot | \beta |$ elementos en la pila, quedando $I_i$ en el tope de la pila. Guardar en la pila $X$ seguido de $I_j = Goto(I_i,X)$.
+
+    ```plain
+      [ <a1,I1> ... <ai,Ii> <b1,Ii+1> ... <bk,Ii+k> ]
+      => REDUCE =>
+      [ <a1,I1> ... <ai,Ii> <X,Ij> ]
+    ```
+
+# Tabla Action-Goto
+
+Sea $I_i$ un estado de la Colección Canónica. Sea $c \in V_T \cup \{ \$ \}$. Sea $X,Y \in V_N$.
+
+- $ACTION[I_i, c] \in \{ `S_k`, `R_k`, `OK` \}$
+- $GOTO[I_i, Y] \in \{ 1...N \}$
+
+          ________ _______________________ ___________
+         |________|_________ACTION________|___GOTO____|
+         | Estado | +   *   (   )  int  $ | E   T   F |
+         |--------|--- --- --- --- --- ---|--- --- ---|
+         |   ...  |          ...          |    ...    |
+         |________|_______________________|___________|
+
+# Tabla Action-Goto
+
+## Cómo llena la tabla un parser SLR(1)?
+
+- **Sea** $X \to \alpha .c \omega$ un item del estado $I_i$ y $Goto(I_i,c) = I_j$. **Entonces** $ACTION[I_i,c] = `S_j`$.
+
+- **Sea** $X \to \alpha .$ un item del estado $I_i$ y $c \in FOLLOW(X)$. **Entonces** $ACTION[I_i,c] = `R_k`$ (producción `k` es $X \to \alpha$).
+
+- **Sea** $I_i$ el estado que contiene el item $S' \to S.$ ($S'$ distinguido). **Entonces** $ACTION[I_i,\$] = `OK`$.
+
+- **Sea** $X \to \alpha .Y \omega$ item del estado $I_i$ y $Goto(I_i,Y) = I_j$. **Entonces** $GOTO[I_i,Y] = j$.
+
+# Notas
+
+En la tabla Action-Goto:
+
+- Debe haber a lo sumo una opción en cada celda.
+
+- Deben aparecer todos los estados entre ACTION y GOTO.
+
+- Deben aparecer todas las producciones entre los $R_k$ de ACTION.
+
+Todos los algoritmos de parsing que estudiaremos este semestre trabajan sobre la tabla Action-Goto.
+
+> Solo cambia la forma de construir la tabla!!!
