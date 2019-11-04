@@ -1,0 +1,293 @@
+% Parsing Ascendente (Bottom-Up)
+% Lic. Juan Pablo Consuegra Ayala
+% MatCom, UH
+
+```python echo=False
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.curdir))
+
+from source.automata import Automaton
+```
+
+# Recordando...
+
+\ ![](../graphics/mountain.svg){ width=100% }
+
+## Problema de Parsing?
+
+# Parser LL(1)
+
+     E -> E + T | T
+     T -> T * F | F
+     F -> ( E ) | int
+
+Qué limitaciones tenía?
+
+. . .
+
+- Eliminación de recursividad izquierda.
+- Factorización de prefijos comunes.
+
+```plain
+ E -> TX
+ X -> +TX | epsilon
+ T -> FY
+ T -> *FY | epsilon
+ F -> ( E ) | int
+```
+
+# Parsing Ascendente
+
+     int + int * int
+     F + int * int      {F -> int}
+     T + int * int      {T -> F}
+     E + int * int      {E -> T}
+     E + F * int        {F -> int}
+     E + T * int        {T -> F}
+
+. . .
+
+> Reducir $T + E \leftarrow E$?  
+> Reducir $T \leftarrow E$?
+
+. . .
+
+     E + T * F          {F -> int}
+     E + T              {T -> T * F}
+     E                  {E -> E + T}
+
+## Por qué es conveniente?
+
+. . .
+
+> Se atrasa la decisión de qué producción aplicar.
+
+# Parsers Shift-Reduce
+
+Un parser *shift-reduce* es un mecanismo de parsing que cuenta con las siguientes estructuras:
+
+- Una pila de símbolos `S`.
+- Una secuencia de terminales `T`.
+
+> Denotamos el estado del parser como $\alpha|\omega$, con $S = \alpha$ y $T = \omega$.
+
+. . .
+
+Y las operaciones siguientes:
+
+- **shift**: Si el parser se encuentra en un estado $\alpha | c \omega$, entonces tras aplicar una operación _shift_ pasa al estado $\alpha c | \omega$.
+- **reduce**: Si el parser se encuentra en un estado $\alpha \beta | \omega$, y $X \rightarrow \beta$ es una producción, entonces tras aplicar una operación _reduce_ $T \rightarrow \beta$ pasa al estado $\alpha X | \omega$.
+
+# Parsers Shift-Reduce
+
+Podemos definir entonces el proceso de parsing como:
+
+> Sea $S = \emptyset$ la pila inicial, $T = \omega \$$ la cadena a reconocer, y $E$ el símbolo inicial, un parser shift-reduce reconoce esta cadena si y solo si existe una secuencia de operaciones **shift** y **reduce** tal que tras aplicarlas se obtiene $S = E$ y $T = \$$.
+
+- Este tipo de parsers son en la práctica los más usados.
+- Permiten reconocer una cadena (y construir la derivación) con un costo lineal en la longitud de la cadena.
+
+# Parsers Shift-Reduce: Ejemplo
+
+     | int + int * int      SHIFT
+     int | + int * int      REDUCE
+     F | + int * int        REDUCE
+     T | + int * int        REDUCE
+     E | + int * int        SHIFT
+     E + | int * int        SHIFT
+     E + int | * int        REDUCE
+     E + F | * int          REDUCE
+     E + T | * int          SHIFT
+     E + T * | int          SHIFT
+     E + T * int |          REDUCE
+     E + T * F |            REDUCE
+     E + T |                REDUCE
+     E
+
+# Cómo decidir entre hacer Shift o Reduce?
+
+. . .
+
+- Principal diferencia entre los distintos tipos de parsers shift-reduce.
+
+> Determinar si estamos en un estado $\alpha \beta | \omega$, tal que la
+producción $X \to \beta$ pertenece a alguna derivación extrema derecha
+que parte del símbolo distinguido.
+($S \to^* \alpha X \omega \to \alpha \beta \omega$).
+
+> Decimos que $\alpha \beta$ es un **handle** de $\alpha \beta \omega$.
+
+# Reconociendo los Handles
+
+## Hecho #1
+
+> En un parser shift-reduce, los handles aparecen solo en el tope de la pila, nunca en su interior.
+>
+> O sea, nunca estaremos en un estado $\alpha \beta \delta | \omega$ siendo $\alpha \beta$ un handle de la forma oracional $\alpha \beta \delta \omega$.
+
+Solo hacen falta movimientos shift a la derecha.
+
+Durante el parsing de una cadena válida, en todo momento tenemos en la pila un prefijo de un handle.
+
+- Llamamos **prefijo viable** a toda forma oracional $\alpha$ que pueda aparecer en la pila durante un reconocimiento válido de una cadena del lenguaje.
+
+# Reconociendo los Handles
+
+## Hecho #2
+
+> Sea $S \to^* \alpha \delta \to^* \omega$ la única derivación extrema derecha de $\omega$. Sea $\alpha | \delta$ un estado de un parser shift-reduce que construye esta derivación. Sea $X_1 \to \theta_1$, ... , $X_n \to \theta_n$ la secuencia de producciones a aplicar tal que $S \to^* \alpha \delta$. Entonces $\alpha = \beta_1 ... \beta_n$, donde $\beta_i$ es prefijo de $\theta_i$.
+
+Muchos de los prefijos $\beta_i$ pueden ser $\epsilon$.
+
+Los prefijos viables surgen de la concatenación de prefijos de las partes derechas de las producciones que podrían aparecer durante una derivación extrema derecha.
+
+# Reconociendo los Handles
+
+## Hecho #3
+
+> El lenguaje de todos los prefijos viables de una gramática libre del contexto es regular.
+
+Como es un lenguaje regular, **existe un autómata finito que lo reconoce!!!**
+
+Observando la pila podemos determinar si aún existe posibilidad de reducir la forma oracional al símbolo distinguido.
+
+Usaremos el autómata además para sugerir shift o reduce (más adelante).
+
+# Prefijos Viables: Autómata
+
+> Cómo se construye el autómata?
+
+. . .
+
+## Item LR(0)
+
+- Llamaremos **item** a una cadena de la forma $X \rightarrow \alpha . \beta$
+    - $\alpha$ lo que "hemos visto".
+    - $\beta$ lo que "nos falta por leer".
+- Por cada producción $X \rightarrow \delta$, tenemos $|\delta|+1$ posibles **items**.
+
+> Formaliza la idea de ver los posibles prefijos de todas las producciones.
+
+# Item LR(0): Ejemplo
+
+Para la producción:
+
+> $F \to ( E )$
+
+Se construyen los siguientes items:
+
+- $F \to .( E )$
+- $F \to ( .E )$
+- $F \to ( E .)$
+- $F \to ( E ).$
+
+# Prefijos Viables: Autómata (continuación)
+
+Aumentar la gramática: añadir producción especial $S' \to S$.
+
+Construir autómata finito no determinista:
+
+- Cada item representa un estado.
+- El estado inicial es representado por el item $S' \to .S$.
+- Todos los estados son finales: _Todo prefijo de un prefijo viable es un prefijo viable_.
+    - Una cadena no es un prefijo viable si el autómata se traba.
+- Función de transición:
+    - $(X \to \alpha . c \beta) \longrightarrow^{c} (X \to \alpha c . \beta)$, con $c \in V_T$
+    - $(X \to \alpha . Y \beta) \longrightarrow^{Y} (X \to \alpha Y . \beta)$, con $Y \in V_N$
+    - $(X \to \alpha . Y \beta) \longrightarrow^{\epsilon} (Y \to .\delta)$, con $Y \in V_N$
+
+# Ejemplo
+
+> En pizarra...
+
+<!-- ```python echo=False, results="plain"
+Automaton("E' -> .E", ['q1'], {
+    ("E' -> .E", "E"): "E' -> E.",
+    ("E' -> .E", "e"): "E -> .E + T",
+    ("E' -> .E", "e"): "E -> .T",
+    ("E' -> .E", "e"): "T -> .T * F",
+    ("E' -> .E", "e"): "T -> .F",
+    ("E' -> .E", "e"): "F -> .int",
+    ("E' -> .E", "e"): "F -> .( E )",
+
+    ("E -> .E + T", "E"): "E -> E .+ T",
+    ("E -> .E + T", "e"): "E -> .E + T",
+    ("E -> .E + T", "e"): "E -> .T",
+    ("E -> .E + T", "e"): "T -> .T + F",
+    ("E -> .E + T", "e"): "T -> .F",
+    ("E -> .E + T", "e"): "F -> .int",
+    ("E -> .E + T", "e"): "F -> .( E )",
+
+    ("E -> .T", "T"): "E -> T.",
+    ("T -> .T * F", "T"): "T -> T .* F",
+    ("T -> .F", "F"): "T -> F.",
+    ("F -> .int", "int"): "F -> int.",
+    ("F -> .( E )","("): "F -> ( .E )",
+}).print(float=False, width="80%")
+``` -->
+
+# Autómata LR(0)
+
+Sabemos que los NFA y DFA son equivalentes.
+
+$\implies$ Transformar el NFA a DFA.
+
+## Construir el DFA directamente:
+
+- Un **item kernel** es aquel de la forma $S' \rightarrow .S$ ($S'$ nuevo símbolo inicial), o cualquier item de la forma $X \rightarrow \alpha . \beta$ con $|\alpha|>1$.
+
+- Un **item no kernel** es aquel de la forma $X \rightarrow .\beta$ excepto el **item** $S' \rightarrow .S$.
+
+- Sea $I$ un conjunto de **items** (kernel o no), el conjunto clausura de $I$ se define como $CL(I) = I \cup \{ X \rightarrow .\beta \}$ tales que $Y \rightarrow \alpha .X \delta \in CL(I)$.
+
+- $Goto(I,X) = CL(\{ Y \rightarrow \alpha X. \beta | Y \rightarrow \alpha .X \beta \in I \})$
+
+> Al conjunto de estados del DFA se le llama **Colección Canónica de Items LR(0)**.
+
+# Parsing LR(0)
+
+Cómo concretar un algoritmo de parsing bottom-up?
+
+. . .
+
+- Verificar si el estado de la pila es un prefijo viable.
+- En tal caso, hacer _shift_ o _reduce_ en función de los items en el estado final.
+    - Se les llama **Items válidos**.
+    - Un item de la forma $X \to \alpha.c\beta$ sugiere _shift_ si el parser se encuentra en un estado $\delta|c\omega$.
+    - Un item de la forma $X \to \alpha.$ sugiere _reduce_ siempre.
+
+Una gramática $G$ se dice LR(0) si y solo si el autómata LR(0) asociado no presenta conflictos shift-reduce ni reduce-reduce bajo el criterio descrito arriba.
+
+# Parsing SLR(1)
+
+Qué limitación se hace evidente del parser LR(0)?
+
+. . .
+
+> Basta con que en un estado hayan más de dos items y uno sugiera _reduce_ para que haya conflicto shift-reduce o reduce-reduce.
+
+Cómo podríamos mejorarlo?
+
+. . .
+
+> Al considerar un item válido $X \to \alpha.$ sugerir _reduce_ solo si el parser se encuentra en un estado $\delta|c\omega$, donde $c \in Follow(X)$.
+
+Una gramática $G$ se dice SLR(1) si y solo si el autómata LR(0) asociado no presenta conflictos shift-reduce ni reduce-reduce bajo el criterio descrito arriba.
+
+# Notas
+
+<!-- - Sea $\alpha \beta \omega$ una forma oracional en un paso intermedio de un parser ascendente. Sea $X \rightarrow \beta$ la siguiente reducción a realizar. Entonces $\omega$ es una cadena de terminales ($\omega \in T^*$). -->
+
+A cada paso que da el parser, tiene que volver a comprobar si lo que queda en la pila es un prefijo viable, para así obtener el conjunto de items válidos.
+
+> Existe alguna mejor forma de moverse por el autómata LR(0)?
+
+. . .
+
+> Guardar estados en la pila: tabla **ACTION-GOTO**.
+
+Existen otras formas de construir el autómata que reconoce los prefijos viables.
+
+> Las estudiaremos en las próximas clases ;)
