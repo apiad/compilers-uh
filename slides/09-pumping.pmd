@@ -15,8 +15,8 @@
 - Sea $k = |Q|$ la cantidad de estados de $A$.
 - Analicemos la cadena $a^k$
 - Existe un estado $q_i$ que se usa 2 veces (¿?).
-- Sea $q_i$ este estado, existe un par de prefijos $a^p$ y $a_q$ que ambos terminan en $q_i$.
-- Entonces sean las cadenas $a_p b^p$ y $a^q b^p$ pasan por $q_i$ y terminan en el mismo $q_f$ (¿?)
+- Sea $q_i$ este estado, existe un par de prefijos $a^p$ y $a^q$ que ambos terminan en $q_i$.
+- Entonces sean las cadenas $a^p b^p$ y $a^q b^p$ pasan por $q_i$ y terminan en el mismo $q_f$ (¿?)
 - Pero una de los dos no pertenece a $L$.
 - Contradicción, $A$ no puede existir.
 

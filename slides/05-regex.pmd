@@ -328,7 +328,7 @@ Si tenemos una expresión regular $r$ y un lenguaje $L$, ¿cómo demostrar que $
 
 - $L(r) \subseteq L$: simulando la expresión regular, demostrar que sólo reconoce cadenas correctas.
 - $L \subseteq L(r)$: dar una forma de construir cada cadena de $L$.
-- Apoyarse en cada sub-expresión $s$ de $r$ genera un sub-lenguaje $L(s)$, y construir recursivamente $L$ aplicando las propiedades.
+- Apoyarse en cada sub-expresión $s$ de $r$, que genera un sub-lenguaje $L(s)$, y construir recursivamente $L$ aplicando las propiedades.
 
 ### Ejemplo:
 

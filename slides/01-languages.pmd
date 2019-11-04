@@ -177,7 +177,7 @@ Cada producción es una rama posible.
 ```python
 def parse_E(tokens):
     t = parse_T(tokens)
-    if tokens[0] == '+':
+    if tokens and tokens[0] == '+':
         tokens.pop(0)
         e = parse_E(tokens)
         return t + e

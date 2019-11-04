@@ -79,7 +79,7 @@
 ### Algunas reglas básicas
 
 - La guía del curso es la construcción de un compilador
-- En las clases prácticas hay que programar
+- En las clases prácticas **hay** que programar
 - Desde el primer día estaremos compilando "algo"
 - Cada clase práctica añadiremos algo nuevo al lenguaje
 - Las conferencias no lo dicen todo
@@ -124,17 +124,36 @@ class Main {
 
 ## ¿Cómo lo vamos a evaluar?
 
-- En cada tema se puede obtener **suficiente** o **excelente**
-- Es imprescindible obtener **suficiente** en los 3 temas
+- El examen final tiene 6 preguntas, 2 de cada tema.
+- En cada pregunta se puede obtener **suficiente** o **excelente**
+- Es imprescindible obtener **suficiente** en las 6 preguntas para aprobar.
+- Es necesario obtener **excelente** en las 6 preguntas para terminar con 5.
 
-. . .
+##  Pero no es tan difícil
 
-- Todo lo que hagan cuenta a su favor
-- Siempre será peor no hacer una evaluación que hacerla mal
-- Habrá exámenes y proyectos en abundancia (al menos 1 por tema)
-- Es posible obtener excelente sin llegar al exámen final (y se lo aconsejamos)
-- Una acumulación de resultados mediocres no suma un resultado excelente
-- Nunca es demasiado tarde para tener éxito, pero cada vez cuesta más
-- Cualquiera se cae una, dos, tres veces, pero hay que levantarse
+- Durante el curso hay 3 examenes parciales y 3 proyectos.
+- Un proyecto con **excelente** convalida ambas preguntas del tema con **excelente**.
+- Un examen parcial con **excelente** convalida una pregunta del tema con **excelente** y otra con **suficiente**.
+- Un proyecto con **suficiente** convalida con suficiente ambas preguntas del tema.
+- Un examen parcial con **suficiente** convalida una pregunta del tema con **suficiente**.
+- Excepcionalmente, los estudiantes con un desempeño impecable en clases prácticas pueden recibir bonificaciones adicionales.
 
-# Introducción a la Compilación
+## Para la clase práctica
+
+> Vamos a hacer un evaluador de expresiones
+
+### Requisitos
+
+- Python 3
+- Jupyter Notebook
+- Acordarse de primer año
+
+## En conclusión
+
+- Todo lo que hagan cuenta a su favor.
+- Siempre será peor no hacer una evaluación que hacerla mal.
+- Es posible obtener excelente sin llegar al exámen final (y se lo aconsejamos).
+- Una acumulación de resultados mediocres no suma un resultado excelente.
+- Nunca es demasiado tarde para tener éxito, pero cada vez cuesta más.
+- Cualquiera se cae una, dos, tres veces, pero hay que levantarse.
+

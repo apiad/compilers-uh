@@ -57,6 +57,8 @@ $(CONTENT_PDF): markdown meta/header.tex meta/metadata.yaml
 
 markdown: folders $(CONTENT_MD)
 	make images
+	cp meta/_config.yml $(BUILD_DIR)/_config.yml
+	cp meta/index.md $(BUILD_DIR)/index.md
 
 $(CONTENT_MD_DIR)/%.md: $(CONTENT_DIR)/%.pmd
 	FILENAME="$<" pweave -f markdown -i markdown -o $@ $<
@@ -112,13 +114,14 @@ folders:
 	mkdir -p $(GRAPHICS_BUILD_DIR)
 
 publish:
+	(cd build && rm -rf .git)
 	(cd build && git init && ( git checkout -b gh-pages || git checkout gh-pages ))
 	(cd build && \
-	 git add html/* && \
+	 git add markdown/* && \
 	 git add graphics/* && \
+	 git add _config.yml index.md && \
 	 git commit -m "Publishing" && \
-	 git pull git@github.com:apiad/compilers-uh.git gh-pages && \
-	 git push git@github.com:apiad/compilers-uh.git gh-pages)
+	 git push -f git@github.com:matcom/compilers.git gh-pages)
 
 clean:
 	rm -rf $(BUILD_DIR)
@@ -127,3 +130,4 @@ dependencies:
 	pip install pweave
 	pip install panflute
 	apt install pandoc
+	apt install inkscape

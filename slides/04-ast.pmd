@@ -375,7 +375,7 @@ class Num(Exp):
 
     |i{3} * ( i{2} + i{5} )
 
-    F [ast=]                                T -> F Y
+    F [ast=.]                               T -> F Y
     Y [ast=. tmp=.]                         T -> F Y
     T [ast=.]                               E -> T X
     X [ast=. tmp=.]                         E -> T X
@@ -386,7 +386,7 @@ class Num(Exp):
     |i{3} * ( i{2} + i{5} )
 
     i [val=.]                               F -> i
-    F [ast=]                                T -> F Y
+    F [ast=.]                               T -> F Y
     Y [ast=. tmp=.]                         T -> F Y
     T [ast=.]                               E -> T X
     X [ast=. tmp=.]                         E -> T X
@@ -397,7 +397,7 @@ class Num(Exp):
      i{3}|* ( i{2} + i{5} )
 
     i [val=3]                               F -> i
-    F [ast=]                                T -> F Y
+    F [ast=.]                               T -> F Y
     Y [ast=. tmp=.]                         T -> F Y
     T [ast=.]                               E -> T X
     X [ast=. tmp=.]                         E -> T X
@@ -448,7 +448,7 @@ class Num(Exp):
      i{3}|* ( i{2} + i{5} )
 
     * []                                    Y -> * F Y
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -460,7 +460,7 @@ class Num(Exp):
      i{3} *|( i{2} + i{5} )
 
     * []                                    Y -> * F Y
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -471,7 +471,7 @@ class Num(Exp):
 
      i{3} *|( i{2} + i{5} )
 
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -485,7 +485,7 @@ class Num(Exp):
     ( []                                    F -> ( E )
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -499,7 +499,7 @@ class Num(Exp):
     ( []                                    F -> ( E )
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -512,7 +512,7 @@ class Num(Exp):
 
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -527,7 +527,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -544,7 +544,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -562,7 +562,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -580,7 +580,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -598,7 +598,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -615,7 +615,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -632,7 +632,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -648,7 +648,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -664,7 +664,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -680,7 +680,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -695,7 +695,7 @@ class Num(Exp):
     X [ast=. tmp=.]                         E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -710,7 +710,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -724,7 +724,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -741,7 +741,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -758,7 +758,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -774,7 +774,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -792,7 +792,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -811,7 +811,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -830,7 +830,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -849,7 +849,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -867,7 +867,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -885,7 +885,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -902,7 +902,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -919,7 +919,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -936,7 +936,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -952,7 +952,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -968,7 +968,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -983,7 +983,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -998,7 +998,7 @@ class Num(Exp):
     X [ast=. tmp=Num(2)]                    E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -1013,7 +1013,7 @@ class Num(Exp):
     X [ast=Add(Num(2),Num(5)) tmp=Num(2)]   E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -1027,7 +1027,7 @@ class Num(Exp):
     X [ast=Add(Num(2),Num(5)) tmp=Num(2)]   E -> T X
     E [ast=.]                               F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -1041,7 +1041,7 @@ class Num(Exp):
     X [ast=Add(Num(2),Num(5)) tmp=Num(2)]   E -> T X
     E [ast=Add(Num(2),Num(5))]              F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X
@@ -1054,7 +1054,7 @@ class Num(Exp):
 
     E [ast=Add(Num(2),Num(5))]              F -> ( E )
     ) []                                    F -> ( E )
-    F [ast=]                                Y -> * F Y
+    F [ast=.]                               Y -> * F Y
     Y [ast=. tmp=.]                         Y -> * F Y
     Y [ast=. tmp=Num(3)]                    T -> F Y
     T [ast=.]                               E -> T X

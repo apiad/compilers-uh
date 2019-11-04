@@ -1,4 +1,4 @@
-# Introducción a la Compilación: Parsing Descendente
+# Introducción a la Compilación:\newline Parsing Descendente
 
 ## Construyendo un parser descendente
 
@@ -127,16 +127,15 @@ S -> cA | cB
 A -> aA | a
 B -> bB | b
 ```
-
-### Se puede arreglar, ¿verdad?
-
 . . .
 
 ```
 S -> cX
 X -> A  | B
-A -> aA | a
-B -> bB | b
+A -> aY
+Y -> A | epsilon
+B -> bZ
+Z -> B | epsilon
 ```
 
 ## Volviendo a la gramática de expresiones
@@ -162,10 +161,12 @@ Por vagancia, usemos una gramática más sencilla...
 
 ```
 E -> T X
-X -> + E | epsilon
-T -> i Y | ( E )
-Y -> * T | epsilon
+X -> + T X | epsilon
+T -> F Y
+Y -> * F Y | epsilon
+F -> ( E ) | i
 ```
+
 
 Y veamos cómo queda el _parse_ de:
 
@@ -173,22 +174,26 @@ Y veamos cómo queda el _parse_ de:
 w = i * ( i + i )
 ```
 
-## Parsing final
+##
 
 ```
-E -> T X
-  -> i Y X
-  -> i * T X
-  -> i * ( E ) X
-  -> i * ( T X ) X
-  -> i * ( i Y X ) X
-  -> i * ( i X ) X
-  -> i * ( i + E ) X
-  -> i * ( i + T X ) X
-  -> i * ( i + i Y X ) X
-  -> i * ( i + i X ) X
-  -> i * ( i + i ) X
-  -> i * ( i + i )
+| E                               E -> T X
+| T X                             T -> F Y
+| F Y X                           F -> i
+i | Y X                           Y -> * F Y
+i * | F Y X                       F -> ( E )
+i * ( | E ) Y X                   E -> T X
+i * ( | T X ) Y X                 X -> F Y
+i * ( | F Y X ) Y X               F -> i
+i * ( i | Y X ) Y X               Y -> epsilon
+i * ( i | X ) Y X                 X -> + T X
+i * ( i + | T X ) Y X             T -> F Y
+i * ( i + | F Y X ) Y X           F -> i
+i * ( i + i | Y X ) Y X           Y -> epsilon
+i * ( i + i | X ) Y X             X -> epsilon
+i * ( i + i ) | Y X               Y -> epsilon
+i * ( i + i ) | X                 X -> epsilon
+i * ( i + i )
 ```
 
 ## ¿Qué hemos hecho en cada paso?
@@ -225,8 +230,8 @@ Informalmente, llamaremos a una gramática, `LL(1)` si estos conjuntos nos permi
 
 * Si $X \rightarrow W1 | W2 | \ldots | Wn$ entonces por definición, $First(X) = \cup First(W_i)$.
 * Si $X \rightarrow^* \epsilon$ entonces $\epsilon \in First(X)$.
-* Si $W = xZ$ donde $x$ es un terminal, entonces trivialmente $First(W) = { x }$.
-* Si $W = YZ$ donde $Y$ es un no-terminal y $Z$ una forma oracional, entonces $First(Y) \subseteq First(W)$.
+* Si $W = xZ$ donde $x$ es un terminal, $W$ y $Z$ son formas oracionales, entonces trivialmente $First(W) = { x }$.
+* Si $W = YZ$ donde $Y$ es un no-terminal, $W$ y $Z$ son formas oracionales, entonces $First(Y) \subseteq First(W)$.
 * Si $W = YZ$ y $Y \rightarrow^* \epsilon$ entonces $First(Z) \subseteq First(W)$.
 
 > **¡A calcular todos los `First`!**
@@ -250,18 +255,19 @@ Informalmente, llamaremos a una gramática, `LL(1)` si estos conjuntos nos permi
 . . .
 
         i      \+      \*       (       )       $
- --- ------- ------- ------- ------- ------- -------
-  E    T X                     T X
-  T    i Y                    ( E )
-  X           \+ E                     \ep     \ep
-  Y            \ep    \* T             \ep     \ep
- --- ------- ------- ------- ------- ------- -------
+ --- ------- -------- ------- ------- ------- -------
+  E    T X                      T X
+  T    F Y                      F Y
+  F     i                      ( E )
+  X           \+ T X                   \ep     \ep
+  Y            \ep    \* F Y           \ep     \ep
+ --- ------- -------- ------- ------- ------- -------
 
 > **¿Probamos a _parsear_ de nuevo?**
 
 ## Finalmente...
 
-> **Definición:** Sea $G=<S,N,T,P>$ una gramática libre del contexto. $G$ es LL(1) si y solo si para todo no-terminal $X \in N$, tal que $X \leftarrow W_1 | W_2 | ... | W_n$ se cumple que:
+> **Definición:** Sea $G=<S,N,T,P>$ una gramática libre del contexto. $G$ es LL(1) si y solo si para todo no-terminal $X \in N$, tal que $X \rightarrow W_1 | W_2 | ... | W_n$ se cumple que:
 >
 > * $First(Wi) \bigcap First(Wj) = \emptyset \,\, \forall i \neq j$
 >
